@@ -1,0 +1,147 @@
+int buttonpress()
+{
+  TButtons b;
+  b = nNxtButtonPressed;
+
+  switch(b)
+  {
+      case kLeftButton:
+      {
+        return 1;
+        break;
+      }
+
+      case kRightButton:
+      {
+         return 2;
+         break;
+      }
+
+      case kEnterButton:
+      {
+       	return 3;
+        break;
+      }
+      default:
+      {
+        return 0;
+        break;
+      }
+  }
+}
+
+void Menu(int *num_colour)
+{
+	eraseDisplay();
+  nNxtButtonTask=1;
+  int button=-1;
+
+	string name_colour[7];
+	name_colour[2]= "Blue";
+	name_colour[3]= "Green";
+	name_colour[4]= "Yellow";
+	name_colour[5]= "Red";
+
+	nxtDisplayString(0, "Choose a Colour:");
+
+    for(int line=2; line <6; line++)
+  	{
+    	nxtDisplayString(line, "   %s", name_colour[line]);
+    	if(line==2)
+    	{
+    		nxtDisplayString(line, "-> %s", name_colour[line]);
+    	}
+  	}
+
+  	int i=2;
+
+  while(button!=3)
+  {
+    button=buttonpress();
+    if(button==2) //Right, go down the list
+  		{
+  			i=i+1;
+  			nxtDisplayString(i, "-> %s", name_colour[i]);
+  			nxtDisplayString(i-1, "   %s", name_colour[i-1]);
+
+  			if(i>5)
+  			{
+  				i=5;
+  				nxtDisplayString(i, "-> %s", name_colour[i]);
+  				nxtDisplayString(6, "               ");
+  			}
+  		}
+  		else if(button==1) //Left, go up the list
+  		{
+  			i=i-1;
+  			nxtDisplayString(i, "-> %s", name_colour[i]);
+  			nxtDisplayString(i+1, "   %s", name_colour[i+1]);
+
+  			if(i<2)
+  			{
+  				i=2;
+  				nxtDisplayString(i, "-> %s", name_colour[i]);
+  				nxtDisplayString(1, "                   ");
+  			}
+  		}
+  		wait1Msec(350);
+  }
+  eraseDisplay();
+
+  nxtDisplayString(0, "There are %i, %s", num_colour[i], name_colour[i]);
+  nxtDisplayString(1, "How many would you like?");
+  nxtDisplayString(2, "1");
+
+  int j=1;
+
+  button=-1;
+
+  while(button!=3)
+	{
+		button=buttonpress();
+
+    if(button==2)
+  		{
+  			j=j+1;
+  			nxtDisplayString(2, "%i", j);
+
+  			if(j>num_colour[i])
+  			{
+  				j=num_colour[i];
+  				nxtDisplayString(2, "%i", j);
+  			}
+  		}
+  		else if(button==1)
+  		{
+  			 j=j-1;
+  			nxtDisplayString(2, "%i", j);
+
+  			if(j<1)
+  			{
+  				j=1;
+  				nxtDisplayString(2, "%i", j);
+  			}
+  		}
+  		wait1Msec(350);
+	}
+
+	eraseDisplay();
+
+	nxtDisplayString(0, "You want %i, %s", j, name_colour[i]);
+	nxtDisplayString(1, "Dispensing...");
+	wait1Msec(3000);
+}
+
+
+task main()
+{
+	int num_colour[7];
+	num_colour[2]=1;
+	num_colour[3]=5;
+	num_colour[4]=6;
+	num_colour[5]=3;
+
+	Menu(num_colour);
+
+
+}
