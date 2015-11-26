@@ -1,0 +1,351 @@
+bool START(TColors c)
+{
+	SensorType[S2]=sensorSONAR;
+
+	if(c==REDCOLOR || c==GREENCOLOR || c==YELLOWCOLOR || c==BLUECOLOR)
+		{
+			while(SensorValue[S2]>15)//15 cm from hand
+			{
+				nxtDisplayString(0,"Wave please!");
+			}
+
+			while(nNxtButtonPressed==-1)
+				{
+					nxtDisplayString(1,"Hello, user.");
+					nxtDisplayString(2,"Button2Begin");
+				}
+
+			while(nNxtButtonPressed!=-1)
+				{}
+
+			eraseDisplay();
+			return true;
+		}
+
+		return false;
+
+}
+
+bool isFull(int colour, float *num_colour)
+{
+	if(num_colour[colour] < 6)
+	{
+		num_colour[colour]+=0.5;//broke
+		nxtDisplayString(0, "num: %d", num_colour[colour]);
+		return false;
+	}
+	return true;
+}
+
+void Rotate(int colour, float & curr_pos)
+{
+
+	SensorType[S3] = sensorTouch;
+
+	int pos_colour[6];
+	pos_colour[2]=0; //blue
+	pos_colour[3]=90;//green
+	pos_colour[4]=180;//yellow
+	pos_colour[5]=270;//red
+
+	float rot_amount = 0;
+	rot_amount = pos_colour[colour] - curr_pos;
+
+	if (pos_colour[colour] < curr_pos)
+		rot_amount = 360 + rot_amount;
+
+	int touch_count = 0;//keep track of how many clicks occur
+	touch_count = abs(rot_amount / 90);
+
+	motor[motorA] = -10;
+
+	while(touch_count > 0)
+	{
+		nxtDisplayString(4, "cnt_b = %d", touch_count);
+	while(SensorValue[S3] != 1)
+		{}
+	while(SensorValue[S3] == 1)
+		{}
+	nxtDisplayString(5, "cnt_a = %d", touch_count);
+	touch_count=touch_count-1;
+		wait1Msec(100);
+
+	/*	if(SensorValue[S3]==1)
+		{
+			touch_count=touch_count-1;
+			wait1Msec(100);
+		}*/
+	}
+
+	motor[motorA]=0;//stop motor A
+	curr_pos = pos_colour[colour];//set new position as the current position
+
+}
+
+void Drop(tMotor m, float dist)
+{
+	nMotorEncoder[m]=0;
+
+	while(abs(nMotorEncoder[m])<dist) //replace with value needed
+	{
+		motor[m]=-20;  //goes out
+	}
+
+	while(abs(nMotorEncoder[m])>0)//-1
+	{
+		motor[m]=20;  //goes in
+	}
+
+	motor[m] = 0;
+}
+
+bool isEmpty(int colour, int amount, float *num_colour)
+{
+	num_colour[colour]=num_colour[colour]-amount;
+	if(num_colour[colour]>0)
+	{
+		//num_colour[colour]=num_colour[colour]-amount;
+		wait1Msec(250);
+		return false;
+	}
+	return true;
+}
+
+void Dispense(float *num_colour, int c, int n, int & curr_pos)
+{
+			Rotate(c, curr_pos);
+
+			while(n>0)
+			{
+				Drop(motorC,165);
+				n=n-1;
+				wait1Msec(1000);
+			}
+}
+
+int buttonpress()
+{
+  TButtons b;
+  b = nNxtButtonPressed;
+
+  switch(b)
+  {
+      case kLeftButton:
+      {
+        return 1;
+        break;
+      }
+
+      case kRightButton:
+      {
+         return 2;
+         break;
+      }
+
+      case kEnterButton:
+      {
+       	return 3;
+        break;
+      }
+      default:
+      {
+        return 0;
+        break;
+      }
+  }
+}
+
+void Menu(float *num_colour, int & sel_colour, int & sel_num)
+{
+	eraseDisplay();
+  nNxtButtonTask=1;
+  int button=-1;
+
+	string name_colour[7];
+	name_colour[2]= "Blue";
+	name_colour[3]= "Green";
+	name_colour[4]= "Yellow";
+	name_colour[5]= "Red";
+
+	nxtDisplayString(0, "Choose colour:");
+
+    for(int line=2; line <6; line++)
+  	{
+    	nxtDisplayString(line, "   %s", name_colour[line]);
+    	if(line==2)
+    	{
+    		nxtDisplayString(line, "-> %s", name_colour[line]);
+    	}
+  	}
+
+  	int i=2;
+
+  while(button!=3)
+  {
+    button=buttonpress();
+    if(button==2) //Right, go down the list
+  		{
+  			i=i+1;
+  			nxtDisplayString(i, "-> %s", name_colour[i]);
+  			nxtDisplayString(i-1, "   %s", name_colour[i-1]);
+
+  			if(i>5)
+  			{
+  				i=5;
+  				nxtDisplayString(i, "-> %s", name_colour[i]);
+  				nxtDisplayString(6, "               ");
+  			}
+  		}
+  		else if(button==1) //Left, go up the list
+  		{
+  			i=i-1;
+  			nxtDisplayString(i, "-> %s", name_colour[i]);
+  			nxtDisplayString(i+1, "   %s", name_colour[i+1]);
+
+  			if(i<2)
+  			{
+  				i=2;
+  				nxtDisplayString(i, "-> %s", name_colour[i]);
+  				nxtDisplayString(1, "                   ");
+  			}
+  		}
+  		wait1Msec(350);
+  }
+  eraseDisplay();
+
+  nxtDisplayString(0, "There are %i,%s", num_colour[i], name_colour[i]);
+  nxtDisplayString(1, "How many?");
+  nxtDisplayString(2, "1");
+
+  int j=1;
+
+  button=-1;
+
+  while(button!=3)
+	{
+		button=buttonpress();
+
+    if(button==2)
+  		{
+  			j=j+1;
+  			nxtDisplayString(2, "%i", j);
+
+  			if(j>num_colour[i])
+  			{
+  				j=num_colour[i];
+  				nxtDisplayString(2, "%i", j);
+  			}
+  		}
+  		else if(button==1)
+  		{
+  			 j=j-1;
+  			nxtDisplayString(2, "%i", j);
+
+  			if(j<1)
+  			{
+  				j=1;
+  				nxtDisplayString(2, "%i", j);
+  			}
+  		}
+  		wait1Msec(350);
+	}
+
+	eraseDisplay();
+
+	sel_colour=i;
+	sel_num=j;
+
+	nxtDisplayString(0, "You want %i, %s", j, name_colour[i]);
+	nxtDisplayString(1, "Dispensing...");
+	wait1Msec(1000);
+}
+
+task main()
+{
+	SensorType[S1] = sensorCOLORFULL;
+	wait1Msec(500);
+
+	float num_colour[7]={1,0,0,0,0,0,0};//black(1), blue(2), green(3), yellow(4), red(5), white(6)
+	float curr_pos = 0;
+
+	int sel_colour=0;
+	int sel_num=0;
+
+	bool check =	START(SensorValue[S1]);//checks if any gumballs are there
+
+if(check == false)//if gumballs aren't there and 10 seconds haven't passed yet
+{
+	time1[T1]=0;
+	while(time1[T1]<10000 && check == false)
+	{
+		nxtDisplayString(0,"Please Refill");//prompts for refill for 10 seconds
+
+				if(SensorValue[S1]==REDCOLOR || SensorValue[S1]==GREENCOLOR || SensorValue[S1]==YELLOWCOLOR || SensorValue[S1]==BLUECOLOR)//if refill is deteced then check start again
+				{
+					eraseDisplay();
+					check = START(SensorValue[S1]);
+				}
+	}
+}
+
+//Sorting Test
+//while statement...
+if(check)//if a gumball is detected and a person is there
+{
+	/*while(SensorValue[S1]==REDCOLOR || SensorValue[S1]==BLUECOLOR || SensorValue[S1]==YELLOWCOLOR || SensorValue[S1]==GREENCOLOR)
+	{*/
+
+	int colourSave = SensorValue[S1];
+
+	nxtDisplayString(2, "col = %d, # = %d", colourSave, num_colour[colourSave]);
+	wait1Msec(2000);
+	while(isFull(colourSave, num_colour)==false && (colourSave==2 || colourSave==3 || colourSave==4 || colourSave==5))//calls isFull and checks if it IS NOT full**
+	{
+		isFull(SensorValue[S1], num_colour);
+		Rotate(colourSave, curr_pos);
+		Drop(motorB, 250);
+		wait1Msec(2500);
+		colourSave = SensorValue[S1];
+	}
+
+
+	while(isEmpty(sel_colour, sel_num, num_colour)==false)
+		{
+			Menu(num_colour, sel_colour, sel_num);
+			Dispense(num_colour, sel_colour, sel_num, curr_pos);
+			eraseDisplay();
+			//Menu(num_colour, sel_colour, sel_num);
+
+			/*int button=0;
+
+			while(button!=3 && isEmpty(sel_colour, sel_num, num_colour)==false)
+			{
+				nxtDisplayString(0, "Another selection?");
+				nxtDisplayString(1, "   Yes    No");
+
+				button=buttonpress();
+
+				if(button==1)	//left
+				{
+					nxtDisplayString(1, " ->Yes    No");
+					button=buttonpress();
+
+					if(button==3)	//thank
+					{
+						Menu(num_colour, sel_colour, sel_num);
+						Dispense(num_colour, sel_colour, sel_num, curr_pos);
+						button=0;
+					}
+					//button=0;
+				}
+				else	//right
+				{
+					nxtDisplayString(1, "   Yes  ->No");
+					button=buttonpress();
+				}
+				wait1Msec(350);
+			}*/
+		}
+}
+
+}
