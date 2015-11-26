@@ -1,0 +1,62 @@
+void Rotate(int colour, int & curr_pos)
+{
+	SensorType[S3] = sensorTouch;
+
+	int pos_colour[7];
+	pos_colour[2]=0; 		//blue
+	pos_colour[3]=90;		//green
+	pos_colour[4]=180;	//yellow
+	pos_colour[5]=270;	//red
+
+	int rot_amount = 0;
+	rot_amount = pos_colour[colour] - curr_pos;
+
+	if (pos_colour[colour] < curr_pos)
+	rot_amount = 360 + rot_amount;
+
+	int touch_count = 0;//keep track of how many clicks occur
+	touch_count = abs(rot_amount / 90);
+
+	motor[motorA] = -10;
+
+	while(touch_count > 0)
+	{
+	/*	while(SensorValue[S3] != 1)
+		{}
+		while(SensorValue[S3] == 1)
+		{}
+
+	touch_count=touch_count-1;
+		wait1Msec(100);*/
+		if(SensorValue[S3]==1)
+		{
+			touch_count=touch_count-1;
+			wait1Msec(50);
+		}
+	}
+
+	nxtDisplayString(0, "pos = %d", curr_pos);
+	wait1Msec(2000);
+
+	motor[motorA]=0;//stop motor A
+	curr_pos = pos_colour[colour];//set new position as the current position
+}
+
+task main()
+{
+	SensorType[S1] = sensorCOLORFULL;
+	wait1Msec(1000);
+	int colourSave = SensorValue[S1];
+	int curr_pos = 0;
+	time1[T1] = 0;
+
+	while(time1[T1] < 30000)
+	{
+		Rotate(colourSave, curr_pos);
+		wait1Msec(2500);
+		colourSave = SensorValue[S1];
+	}
+
+	nxtDisplayString(0, "Donezo");
+
+}
