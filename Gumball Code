@@ -1,4 +1,4 @@
-bool START(TColors c)
+bool START(TColors c)  // Written by Joanna Lou
 {
 	SensorType[S2]=sensorSONAR;
 
@@ -26,18 +26,18 @@ bool START(TColors c)
 
 }
 
-bool isFull(int colour, float *num_colour)
+bool isFull(int colour, float *num_colour)  //Written by Joonah Kim
 {
 	if(num_colour[colour] < 6)
 	{
-		num_colour[colour]+=0.5;//broke
+		num_colour[colour]+=0.5; //+0.5 was found through testing
 		nxtDisplayString(0, "num: %d", num_colour[colour]);
 		return false;
 	}
 	return true;
 }
 
-void Rotate(int colour, float & curr_pos)
+void Rotate(int colour, float & curr_pos)	//Written by David Chau
 {
 
 	SensorType[S3] = sensorTouch;
@@ -82,7 +82,7 @@ void Rotate(int colour, float & curr_pos)
 
 }
 
-void Drop(tMotor m, float dist)
+void Drop(tMotor m, float dist)	//Written by Simon Cheng
 {
 	nMotorEncoder[m]=0;
 
@@ -99,7 +99,7 @@ void Drop(tMotor m, float dist)
 	motor[m] = 0;
 }
 
-bool isEmpty(int colour, int amount, float *num_colour)
+bool isEmpty(int colour, int amount, float *num_colour)	//Written by Joanna Lou
 {
 	num_colour[colour]=num_colour[colour]-amount;
 	if(num_colour[colour]>0)
@@ -111,7 +111,7 @@ bool isEmpty(int colour, int amount, float *num_colour)
 	return true;
 }
 
-void Dispense(float *num_colour, int c, int n, int & curr_pos)
+void Dispense(float *num_colour, int c, int n, int & curr_pos) //Written by Joanna Lou
 {
 			Rotate(c, curr_pos);
 
@@ -123,7 +123,7 @@ void Dispense(float *num_colour, int c, int n, int & curr_pos)
 			}
 }
 
-int buttonpress()
+int buttonpress() //Written by Joanna Lou
 {
   TButtons b;
   b = nNxtButtonPressed;
@@ -155,7 +155,7 @@ int buttonpress()
   }
 }
 
-void Menu(float *num_colour, int & sel_colour, int & sel_num)
+void Menu(float *num_colour, int & sel_colour, int & sel_num) //Written by Joanna Lou
 {
 	eraseDisplay();
   nNxtButtonTask=1;
@@ -260,7 +260,7 @@ void Menu(float *num_colour, int & sel_colour, int & sel_num)
 	wait1Msec(1000);
 }
 
-task main()
+task main() //Written by Joanna Lou and David Chau
 {
 	SensorType[S1] = sensorCOLORFULL;
 	wait1Msec(500);
