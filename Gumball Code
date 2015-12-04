@@ -4,7 +4,7 @@ bool START(TColors c)  // Written by Joanna Lou
 
 	if(c==REDCOLOR || c==GREENCOLOR || c==YELLOWCOLOR || c==BLUECOLOR)
 		{
-			while(SensorValue[S2]>15)//15 cm from hand
+			while(SensorValue[S2]>15) //15 cm from hand
 			{
 				nxtDisplayString(0,"Wave please!");
 			}
@@ -28,10 +28,9 @@ bool START(TColors c)  // Written by Joanna Lou
 
 bool isFull(int colour, float *num_colour)  //Written by Joonah Kim
 {
-	if(num_colour[colour] < 6)
+	if(num_colour[colour] < 6)  //Function checks if the tubes are full, 6=Max Capacity
 	{
 		num_colour[colour]+=0.5; //+0.5 was found through testing
-		nxtDisplayString(0, "num: %d", num_colour[colour]);
 		return false;
 	}
 	return true;
@@ -42,69 +41,58 @@ void Rotate(int colour, float & curr_pos)	//Written by David Chau
 
 	SensorType[S3] = sensorTouch;
 
-	int pos_colour[6];
+	int pos_colour[6]; //Position of each colour tube
 	pos_colour[2]=0; //blue
-	pos_colour[3]=90;//green
-	pos_colour[4]=180;//yellow
-	pos_colour[5]=270;//red
+	pos_colour[3]=90;  //green
+	pos_colour[4]=180; //yellow
+	pos_colour[5]=270; //red
 
 	float rot_amount = 0;
-	rot_amount = pos_colour[colour] - curr_pos;
-
-	if (pos_colour[colour] < curr_pos)
+	rot_amount = pos_colour[colour] - curr_pos; //distance between the 
+						      position wanted and the current position
+	if (pos_colour[colour] < curr_pos)	
 		rot_amount = 360 + rot_amount;
 
-	int touch_count = 0;//keep track of how many clicks occur
-	touch_count = abs(rot_amount / 90);
-
+	int touch_count = 0;
+	touch_count = abs(rot_amount / 90); //amount of times the touch sensor needs to be 
+					      clicked before correct colour is reached
 	motor[motorA] = -10;
-
+	
 	while(touch_count > 0)
 	{
-		nxtDisplayString(4, "cnt_b = %d", touch_count);
-	while(SensorValue[S3] != 1)
-		{}
-	while(SensorValue[S3] == 1)
-		{}
-	nxtDisplayString(5, "cnt_a = %d", touch_count);
+	while(SensorValue[S3] != 1){} //sees if touch sensor has been touched
+	while(SensorValue[S3] == 1){}
+	
 	touch_count=touch_count-1;
 		wait1Msec(100);
-
-	/*	if(SensorValue[S3]==1)
-		{
-			touch_count=touch_count-1;
-			wait1Msec(100);
-		}*/
 	}
 
 	motor[motorA]=0;//stop motor A
-	curr_pos = pos_colour[colour];//set new position as the current position
-
+	curr_pos = pos_colour[colour]; //set current position as the postion after sorting one gumball
 }
 
 void Drop(tMotor m, float dist)	//Written by Simon Cheng
 {
 	nMotorEncoder[m]=0;
 
-	while(abs(nMotorEncoder[m])<dist) //replace with value needed
-	{
+	while(abs(nMotorEncoder[m])<dist) //amount of spin for each encoder was found to be different
+	{				    motorC=165, motor B=250
 		motor[m]=-20;  //goes out
 	}
-
+	
 	while(abs(nMotorEncoder[m])>0)//-1
 	{
 		motor[m]=20;  //goes in
 	}
 
-	motor[m] = 0;
+	motor[m] = 0;		
 }
 
 bool isEmpty(int colour, int amount, float *num_colour)	//Written by Joanna Lou
 {
 	num_colour[colour]=num_colour[colour]-amount;
-	if(num_colour[colour]>0)
+	if(num_colour[colour]>0)  //checks if the tubes have gumballs in them 
 	{
-		//num_colour[colour]=num_colour[colour]-amount;
 		wait1Msec(250);
 		return false;
 	}
@@ -113,14 +101,14 @@ bool isEmpty(int colour, int amount, float *num_colour)	//Written by Joanna Lou
 
 void Dispense(float *num_colour, int c, int n, int & curr_pos) //Written by Joanna Lou
 {
-			Rotate(c, curr_pos);
+	Rotate(c, curr_pos); //Rotates to colour asked for by user
 
-			while(n>0)
-			{
-				Drop(motorC,165);
-				n=n-1;
-				wait1Msec(1000);
-			}
+	while(n>0) //n=amount asked for by user
+	{
+		Drop(motorC,165);   //motor at the bottom
+		n=n-1; //continue dispensing until the amount has been reached
+		wait1Msec(1000);
+	}
 }
 
 int buttonpress() //Written by Joanna Lou
@@ -273,79 +261,42 @@ task main() //Written by Joanna Lou and David Chau
 
 	bool check =	START(SensorValue[S1]);//checks if any gumballs are there
 
-if(check == false)//if gumballs aren't there and 10 seconds haven't passed yet
-{
-	time1[T1]=0;
-	while(time1[T1]<10000 && check == false)
+	if(check == false)//if gumballs aren't there and 10 seconds haven't passed yet
 	{
-		nxtDisplayString(0,"Please Refill");//prompts for refill for 10 seconds
+		time1[T1]=0;
+		while(time1[T1]<10000 && check == false)
+		{
+			nxtDisplayString(0,"Please Refill");//prompts for refill for 10 seconds
 
-				if(SensorValue[S1]==REDCOLOR || SensorValue[S1]==GREENCOLOR || SensorValue[S1]==YELLOWCOLOR || SensorValue[S1]==BLUECOLOR)//if refill is deteced then check start again
-				{
-					eraseDisplay();
-					check = START(SensorValue[S1]);
-				}
-	}
-}
-
-//Sorting Test
-//while statement...
-if(check)//if a gumball is detected and a person is there
-{
-	/*while(SensorValue[S1]==REDCOLOR || SensorValue[S1]==BLUECOLOR || SensorValue[S1]==YELLOWCOLOR || SensorValue[S1]==GREENCOLOR)
-	{*/
-
-	int colourSave = SensorValue[S1];
-
-	nxtDisplayString(2, "col = %d, # = %d", colourSave, num_colour[colourSave]);
-	wait1Msec(2000);
-	while(isFull(colourSave, num_colour)==false && (colourSave==2 || colourSave==3 || colourSave==4 || colourSave==5))//calls isFull and checks if it IS NOT full**
-	{
-		isFull(SensorValue[S1], num_colour);
-		Rotate(colourSave, curr_pos);
-		Drop(motorB, 250);
-		wait1Msec(2500);
-		colourSave = SensorValue[S1];
+			if(SensorValue[S1]==REDCOLOR || SensorValue[S1]==GREENCOLOR || SensorValue[S1]==YELLOWCOLOR || SensorValue[S1]==BLUECOLOR)//if refill is deteced then check start again
+			{
+				eraseDisplay();
+				check = START(SensorValue[S1]);
+			}
+		}
 	}
 
+	if(check)   //if a gumball is detected and a person is there
+	{
+		int colourSave = SensorValue[S1];
+		wait1Msec(2000);
+		
+		while(isFull(colourSave, num_colour)==false && (colourSave==2 || colourSave==3 || colourSave==4 || colourSave==5))//calls isFull and checks if it IS NOT full**
+		{
+			isFull(SensorValue[S1], num_colour);
+			Rotate(colourSave, curr_pos);
+			Drop(motorB, 250);
+			wait1Msec(2500);
+			colourSave = SensorValue[S1];
+		}
 
-	while(isEmpty(sel_colour, sel_num, num_colour)==false)
+
+		while(isEmpty(sel_colour, sel_num, num_colour)==false)
 		{
 			Menu(num_colour, sel_colour, sel_num);
 			Dispense(num_colour, sel_colour, sel_num, curr_pos);
 			eraseDisplay();
-			//Menu(num_colour, sel_colour, sel_num);
-
-			/*int button=0;
-
-			while(button!=3 && isEmpty(sel_colour, sel_num, num_colour)==false)
-			{
-				nxtDisplayString(0, "Another selection?");
-				nxtDisplayString(1, "   Yes    No");
-
-				button=buttonpress();
-
-				if(button==1)	//left
-				{
-					nxtDisplayString(1, " ->Yes    No");
-					button=buttonpress();
-
-					if(button==3)	//thank
-					{
-						Menu(num_colour, sel_colour, sel_num);
-						Dispense(num_colour, sel_colour, sel_num, curr_pos);
-						button=0;
-					}
-					//button=0;
-				}
-				else	//right
-				{
-					nxtDisplayString(1, "   Yes  ->No");
-					button=buttonpress();
-				}
-				wait1Msec(350);
-			}*/
 		}
-}
+	}
 
 }
