@@ -48,14 +48,12 @@ void Rotate(int colour, float & curr_pos)	//Written by David Chau
 	pos_colour[5]=270; //red
 
 	float rot_amount = 0;
-	rot_amount = pos_colour[colour] - curr_pos; //distance between the 
-						      position wanted and the current position
+	rot_amount = pos_colour[colour] - curr_pos; //distance between the position wanted and the current position
 	if (pos_colour[colour] < curr_pos)	
 		rot_amount = 360 + rot_amount;
 
 	int touch_count = 0;
-	touch_count = abs(rot_amount / 90); //amount of times the touch sensor needs to be 
-					      clicked before correct colour is reached
+	touch_count = abs(rot_amount / 90); //amount of times the touch sensor needs to clicked before correct colour is reached
 	motor[motorA] = -10;
 	
 	while(touch_count > 0)
@@ -75,8 +73,8 @@ void Drop(tMotor m, float dist)	//Written by Simon Cheng
 {
 	nMotorEncoder[m]=0;
 
-	while(abs(nMotorEncoder[m])<dist) //amount of spin for each encoder was found to be different
-	{				    motorC=165, motor B=250
+	while(abs(nMotorEncoder[m])<dist) //amount of spin for each encoder was found to be different: motorC=165, motor B=250
+	{				  
 		motor[m]=-20;  //goes out
 	}
 	
@@ -114,28 +112,28 @@ void Dispense(float *num_colour, int c, int n, int & curr_pos) //Written by Joan
 int buttonpress() //Written by Joanna Lou
 {
   TButtons b;
-  b = nNxtButtonPressed;
+  b = nNxtButtonPressed; //checks if button is pressed
 
   switch(b)
   {
-      case kLeftButton:
+      case kLeftButton:  //when left button is pressed, return 1
       {
         return 1;
         break;
       }
 
-      case kRightButton:
+      case kRightButton:   //when right button is pressed, return 2
       {
          return 2;
          break;
       }
 
-      case kEnterButton:
+      case kEnterButton:   //when middle button is pressed, return 3
       {
        	return 3;
         break;
       }
-      default:
+      default:	//if no button is pressed, return 0
       {
         return 0;
         break;
@@ -146,32 +144,33 @@ int buttonpress() //Written by Joanna Lou
 void Menu(float *num_colour, int & sel_colour, int & sel_num) //Written by Joanna Lou
 {
 	eraseDisplay();
-  nNxtButtonTask=1;
-  int button=-1;
+  	nNxtButtonTask=1;
+  	int button=-1;
 
-	string name_colour[7];
-	name_colour[2]= "Blue";
+	string name_colour[7];  //stores the names of colours, corresponds to int value of the colour
+	name_colour[2]= "Blue"; 
 	name_colour[3]= "Green";
 	name_colour[4]= "Yellow";
 	name_colour[5]= "Red";
 
 	nxtDisplayString(0, "Choose colour:");
 
-    for(int line=2; line <6; line++)
+    	for(int line=2; line <6; line++)	//outputs all the names of the colours
   	{
-    	nxtDisplayString(line, "   %s", name_colour[line]);
-    	if(line==2)
-    	{
-    		nxtDisplayString(line, "-> %s", name_colour[line]);
-    	}
+    		nxtDisplayString(line, "   %s", name_colour[line]);
+    		
+    		if(line==2)
+    		{
+    			nxtDisplayString(line, "-> %s", name_colour[line]); //places a "cursor" at the first colour
+    		}
   	}
 
   	int i=2;
 
-  while(button!=3)
-  {
-    button=buttonpress();
-    if(button==2) //Right, go down the list
+  	while(button!=3)
+	{
+    		button=buttonpress();
+    		if(button==2) //Right, go down the list
   		{
   			i=i+1;
   			nxtDisplayString(i, "-> %s", name_colour[i]);
