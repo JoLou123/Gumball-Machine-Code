@@ -109,36 +109,36 @@ void Dispense(float *num_colour, int c, int n, int & curr_pos) //Written by Joan
 	}
 }
 
-int buttonpress() //Written by Joanna Lou
+//Written by Joanna Lou
+int buttonpress()  //referenced from [2]
 {
-  TButtons b;
-  b = nNxtButtonPressed; //checks if button is pressed
+  	TButtons b;
+  	b = nNxtButtonPressed; //checks if button is pressed
 
-  switch(b)
-  {
-      case kLeftButton:  //when left button is pressed, return 1
-      {
-        return 1;
-        break;
-      }
+  	switch(b)
+  	{
+      	case kLeftButton:  //when left button is pressed, return 1
+      	{
+        	return 1;
+		break;
+      	}
 
-      case kRightButton:   //when right button is pressed, return 2
-      {
-         return 2;
-         break;
-      }
+      	case kRightButton:   //when right button is pressed, return 2
+	{
+         	return 2;
+         	break;
+      	}
 
-      case kEnterButton:   //when middle button is pressed, return 3
-      {
-       	return 3;
-        break;
-      }
-      default:	//if no button is pressed, return 0
-      {
-        return 0;
-        break;
-      }
-  }
+      	case kEnterButton:   //when middle button is pressed, return 3
+      	{
+       		return 3;
+        	break;
+      	}
+      	default:	//if no button is pressed, return 0
+      	{
+        	return 0;
+        	break;
+      	}
 }
 
 void Menu(float *num_colour, int & sel_colour, int & sel_num) //Written by Joanna Lou
