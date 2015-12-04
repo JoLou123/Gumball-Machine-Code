@@ -30,7 +30,7 @@ bool isFull(int colour, float *num_colour)  //Written by Joonah Kim
 {
 	if(num_colour[colour] < 6)  //Function checks if the tubes are full, 6=Max Capacity
 	{
-		num_colour[colour]+=0.5; //+0.5 was found through testing
+		num_colour[colour]+=1; //adds 1 to the array that keeps track of the number of gumballs in the tubes
 		return false;
 	}
 	return true;
@@ -167,71 +167,71 @@ void Menu(float *num_colour, int & sel_colour, int & sel_num) //Written by Joann
 
   	int i=2;
 
-  	while(button!=3)
+  	while(button!=3) //Middle button has not been pushed=colour has not been selected
 	{
-    		button=buttonpress();
-    		if(button==2) //Right, go down the list
+    		button=buttonpress();//reads in button press
+    		if(button==2) //Right, moves cursor down the list
   		{
   			i=i+1;
   			nxtDisplayString(i, "-> %s", name_colour[i]);
-  			nxtDisplayString(i-1, "   %s", name_colour[i-1]);
+  			nxtDisplayString(i-1, "   %s", name_colour[i-1]); //removes the cursor from the line before
 
-  			if(i>5)
+  			if(i>5) //cannot continue past the end of the menu
   			{
   				i=5;
-  				nxtDisplayString(i, "-> %s", name_colour[i]);
+  				nxtDisplayString(i, "-> %s", name_colour[i]); //cursor stays at the last item in the list
   				nxtDisplayString(6, "               ");
   			}
   		}
-  		else if(button==1) //Left, go up the list
+  		else if(button==1) //Left, moves cursor up the list
   		{
   			i=i-1;
   			nxtDisplayString(i, "-> %s", name_colour[i]);
-  			nxtDisplayString(i+1, "   %s", name_colour[i+1]);
+  			nxtDisplayString(i+1, "   %s", name_colour[i+1]); //removes cursor from the line after
 
-  			if(i<2)
+  			if(i<2)  //cannot move past the top of the list
   			{
   				i=2;
-  				nxtDisplayString(i, "-> %s", name_colour[i]);
+  				nxtDisplayString(i, "-> %s", name_colour[i]);  //cursor stays at the first item in the list
   				nxtDisplayString(1, "                   ");
   			}
   		}
   		wait1Msec(350);
-  }
-  eraseDisplay();
+	}
+	eraseDisplay();
 
-  nxtDisplayString(0, "There are %i,%s", num_colour[i], name_colour[i]);
-  nxtDisplayString(1, "How many?");
-  nxtDisplayString(2, "1");
+	nxtDisplayString(0, "There are %i,%s", num_colour[i], name_colour[i]); //displays how many of the selected colour there are
+  	nxtDisplayString(1, "How many?");
+  	nxtDisplayString(2, "1"); //selection starts at 1
 
-  int j=1;
+  	int j=1;
 
-  button=-1;
+  	button=-1;
 
-  while(button!=3)
+  	while(button!=3)
 	{
 		button=buttonpress();
 
-    if(button==2)
+    		if(button==2)  //Right, increases value of selection
   		{
   			j=j+1;
   			nxtDisplayString(2, "%i", j);
 
-  			if(j>num_colour[i])
+  			if(j>num_colour[i])  //user cannot ask for more gumballs than what is in the tube
   			{
-  				j=num_colour[i];
-  				nxtDisplayString(2, "%i", j);
+  				j=num_colour[i]; 
+  				nxtDisplayString(2, "%i", j);  //value will not increase furth
   			}
   		}
-  		else if(button==1)
+  		else if(button==1)  //Left, decreases value of the selection
   		{
-  			 j=j-1;
+  			j=j-1;
   			nxtDisplayString(2, "%i", j);
 
-  			if(j<1)
+  			if(j<1)  //User cannot make a negative or 0 selection
   			{
   				j=1;
-  				nxtDisplayString(2, "%i", j);
+  				nxtDisplayString(2, "%i", j);  //value stays at 1
   			}
   		}
   		wait1Msec(350);
@@ -239,8 +239,8 @@ void Menu(float *num_colour, int & sel_colour, int & sel_num) //Written by Joann
 
 	eraseDisplay();
 
-	sel_colour=i;
-	sel_num=j;
+	sel_colour=i; //saves int value of colour selected
+	sel_num=j;  //saves number of gumballs user wishes to dispense
 
 	nxtDisplayString(0, "You want %i, %s", j, name_colour[i]);
 	nxtDisplayString(1, "Dispensing...");
@@ -258,16 +258,16 @@ task main() //Written by Joanna Lou and David Chau
 	int sel_colour=0;
 	int sel_num=0;
 
-	bool check =	START(SensorValue[S1]);//checks if any gumballs are there
+	bool check=START(SensorValue[S1]);//checks if any gumballs are there
 
-	if(check == false)//if gumballs aren't there and 10 seconds haven't passed yet
+	if(check==false)//if gumballs aren't there and 10 seconds haven't passed yet
 	{
 		time1[T1]=0;
-		while(time1[T1]<10000 && check == false)
+		while(time1[T1]<10000 && check == false) //User has 10 seconds to refill the tube 
 		{
-			nxtDisplayString(0,"Please Refill");//prompts for refill for 10 seconds
+			nxtDisplayString(0,"Please Refill"); //prompts for refill for 10 seconds
 
-			if(SensorValue[S1]==REDCOLOR || SensorValue[S1]==GREENCOLOR || SensorValue[S1]==YELLOWCOLOR || SensorValue[S1]==BLUECOLOR)//if refill is deteced then check start again
+			if(SensorValue[S1]==REDCOLOR || SensorValue[S1]==GREENCOLOR || SensorValue[S1]==YELLOWCOLOR || SensorValue[S1]==BLUECOLOR)//if a colour is detected, will go to start function and wait for user
 			{
 				eraseDisplay();
 				check = START(SensorValue[S1]);
@@ -280,17 +280,16 @@ task main() //Written by Joanna Lou and David Chau
 		int colourSave = SensorValue[S1];
 		wait1Msec(2000);
 		
-		while(isFull(colourSave, num_colour)==false && (colourSave==2 || colourSave==3 || colourSave==4 || colourSave==5))//calls isFull and checks if it IS NOT full**
-		{
-			isFull(SensorValue[S1], num_colour);
-			Rotate(colourSave, curr_pos);
-			Drop(motorB, 250);
+		while(isFull(colourSave, num_colour)==false && (colourSave==2 || colourSave==3 || colourSave==4 || colourSave==5)) //continues sorting until one of the tubes is full and a colour is still detected
+		{	
+			Rotate(colourSave, curr_pos); //rotates to correct colour
+			Drop(motorB, 250);	//drops the gumbal into the tube
 			wait1Msec(2500);
-			colourSave = SensorValue[S1];
+			colourSave = SensorValue[S1]; //gumball colour will change after one gumball has been sorted
 		}
 
 
-		while(isEmpty(sel_colour, sel_num, num_colour)==false)
+		while(isEmpty(sel_colour, sel_num, num_colour)==false) //will continue displaying the menu until one of the tubes is empty
 		{
 			Menu(num_colour, sel_colour, sel_num);
 			Dispense(num_colour, sel_colour, sel_num, curr_pos);
