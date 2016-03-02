@@ -1,7 +1,6 @@
-# Gumball-Machine-Code
+# Gumball Machine - Lego NXT Group Design Project
 
 ============
-Code for a 1A Mechatronics Project, where we were given free range 
-to make whatever we wanted using the Lego Mindstorms and various other 
-materials. All code is in Robot C.
+The code was written in Robot C and implemented in our 1A Mechatronics group design project, where we were given free reign 
+to make whatever we wanted using the given Lego Mindstorms Kit and various other materials. Our group created a gumball machine that was capable of sorting gumballs by colour and dispensing based on user input.
 ======================
